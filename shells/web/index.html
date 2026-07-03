@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light dark">
 <title>Stereo Splitter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   /* ---------- tokens ---------- */
   :root {
@@ -63,7 +66,7 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+    font-family: "Space Grotesk", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
     font-size: 15px;
     line-height: 1.45;
     min-height: 100vh;
@@ -179,10 +182,23 @@
   /* ---------- landing ---------- */
   .hero { padding: 60px 0 6px; text-align: center; }
   .hero h1 {
-    font-size: clamp(34px, 5.4vw, 44px);
-    font-weight: 700; letter-spacing: -0.03em; line-height: 1.1;
+    font-size: clamp(36px, 5.6vw, 50px);
+    font-weight: 600; letter-spacing: -0.03em; line-height: 1.06;
   }
-  .hero .sub { color: var(--muted); font-size: 17px; margin-top: 12px; }
+  .hero .sub { color: var(--muted); font-size: 17px; margin-top: 14px; max-width: 460px; margin-left: auto; margin-right: auto; }
+  .eyebrow { color: var(--accent); font-size: 13px; font-weight: 500; letter-spacing: 0.02em; margin-bottom: 14px; }
+  .wave { display: flex; align-items: center; justify-content: center; gap: 3px; height: 92px; margin: 36px auto 0; max-width: 460px; }
+  .wave .bar { width: 4px; border-radius: 3px; background: var(--control-strong); transform-origin: center; }
+  .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; margin-top: 24px; }
+  .chip { font-size: 13px; font-weight: 500; color: var(--muted); background: var(--card); border: 1px solid var(--sep); padding: 7px 15px; border-radius: 999px; }
+  @media (prefers-reduced-motion: no-preference) {
+    .wave .bar { animation: wavePulse 2.6s ease-in-out infinite; }
+    @keyframes wavePulse {
+      0%, 100% { background: var(--control-strong); transform: scaleY(1); }
+      6% { background: var(--accent); transform: scaleY(1.35); }
+      14% { background: var(--control-strong); transform: scaleY(1); }
+    }
+  }
 
   .dropzone {
     margin-top: 40px;
@@ -570,8 +586,10 @@
   <!-- A. Landing -->
   <section id="landing" class="screen">
     <div class="hero">
-      <h1>Stereo Splitter</h1>
-      <p class="sub">Pull any song apart. Put it back anywhere in the room.</p>
+      <p class="eyebrow">Runs on your Mac &middot; nothing leaves your machine</p>
+      <h1>Put any song<br>anywhere in the room.</h1>
+      <p class="sub">Split a track into stems, then place each one in space &mdash; wrap the vocal around your head, orbit the guitar, drown it all in reverb.</p>
+      <div class="wave" id="landingWave" aria-hidden="true"></div>
     </div>
     <div class="dropzone" id="dropzone" tabindex="0" role="button"
          aria-label="Drop a song here or press Enter to browse for an audio file">
@@ -583,6 +601,12 @@
       <div class="dz-big">Drop a song here</div>
       <div class="dz-small">or click to browse &mdash; MP3, WAV, FLAC, M4A, AAC, OGG, AIFF</div>
       <input type="file" id="fileInput" accept=".mp3,.wav,.flac,.m4a,.aac,.ogg,.aiff" hidden>
+    </div>
+    <div class="chips" aria-hidden="true">
+      <span class="chip">Split</span>
+      <span class="chip">Wide</span>
+      <span class="chip">8D</span>
+      <span class="chip">Slowed</span>
     </div>
     <p class="footnote">Everything runs locally &mdash; your music never leaves this computer.</p>
   </section>
@@ -1590,6 +1614,20 @@
   setBusy(null);
   resetMaster();
   show("landing");
+
+  (function buildWave() {
+    var w = document.getElementById("landingWave");
+    if (!w) return;
+    var n = 41;
+    for (var i = 0; i < n; i++) {
+      var b = document.createElement("span");
+      b.className = "bar";
+      var env = Math.pow(Math.sin(Math.PI * i / (n - 1)), 0.7);
+      b.style.height = Math.round(14 + 64 * env * (0.75 + 0.25 * Math.random())) + "px";
+      b.style.animationDelay = (-2.6 + (i / (n - 1)) * 2.6).toFixed(2) + "s";
+      w.appendChild(b);
+    }
+  })();
 })();
 </script>
 </body>
