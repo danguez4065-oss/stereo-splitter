@@ -10,7 +10,7 @@ import os
 import urllib.error
 import urllib.request
 
-from dsp import MODES
+from core.dsp import MODES
 
 OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434")
 MODEL = os.environ.get("STEREO_SPLITTER_MODEL", "gemma4:12b")

@@ -71,7 +71,7 @@ def apply_mode(
         out[:, 1] = m * np.sin(theta)
 
     elif mode == "eightd":
-        import effects
+        from core import effects
 
         dep = float(np.clip(depth, 0.0, 1.0))
         t = np.arange(n, dtype=np.float32) / sr
