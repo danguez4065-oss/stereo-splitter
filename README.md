@@ -10,7 +10,7 @@ runs locally in your browser against a small Python server.
 ## Get it
 
 ```bash
-git clone <REPO_URL>
+git clone https://github.com/danguez4065-oss/stereo-splitter.git
 cd stereo-splitter
 ```
 
