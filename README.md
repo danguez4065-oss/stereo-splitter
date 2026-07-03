@@ -7,10 +7,20 @@ then lets you re-pan and re-space each one — the "Malibu Sleep" wrap-around
 effect, Beatles-style hard pans, 8D orbits, slowed + reverb edits. Everything
 runs locally in your browser against a small Python server.
 
+## Get it
+
+```bash
+git clone <REPO_URL>
+cd stereo-splitter
+```
+
+Then either **double-click `Start Stereo Splitter.command`** in Finder — first
+run sets everything up (a few minutes), after that it just launches and opens
+the app — or do the manual setup below.
+
 ## Setup (Mac, one time)
 
 ```bash
-cd stereo-splitter
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
@@ -86,10 +96,43 @@ or the model isn't pulled. Nothing leaves your machine.
 
 ## Files
 
-- `app.py` — Flask server: upload, cache, Demucs jobs, render, downloads, chat
-- `chat.py` — Ollama client, mixing-assistant prompt, settings validation
-- `dsp.py` — panning modes (pure numpy)
-- `effects.py` — reverb, slowed, loudness match, soft limiter
-- `analysis.py` — BPM estimation, mono metrics, preview-window picker
-- `static/index.html` — the UI (single file, no external dependencies)
+- `app.py` — thin shim so `python app.py` still works; the real server lives
+  in `server/`
+- `core/` — the audio core:
+  - `core/dsp.py` — panning modes (pure numpy)
+  - `core/effects.py` — reverb, slowed, loudness match, soft limiter
+  - `core/analysis.py` — BPM estimation, mono metrics, preview-window picker
+- `intent/engine.py` — Ollama client, mixing-assistant prompt, settings
+  validation
+- `server/app.py` — Flask server: upload, cache, Demucs jobs, render,
+  downloads, chat (routes only)
+- `shells/web/index.html` — the UI (single file, no external dependencies)
+- `schema/mix_document.schema.json` — the Mix Document: the one contract the
+  UI, the assistant, and the audio core all speak
+- `tests/` — DSP, server, and chat suites (separation is mocked, so they run
+  without the Demucs model)
+- `docs/` — `ROADMAP.md` (strategy) and `LOOPS.md` (how it gets built)
 - `cache/` — created at runtime; separated stems live here (safe to delete)
+
+## Development
+
+The tests are plain Python scripts — no runner needed:
+
+```bash
+python tests/test_dsp.py
+python tests/test_server.py
+python tests/test_chat.py
+```
+
+CI (GitHub Actions) runs the same three suites on every push and pull
+request, installing from `requirements-ci.txt` (no Demucs/torch — separation
+is mocked in tests).
+
+The build process is a sequence of small, verified loops — see
+`docs/LOOPS.md` for the methodology, the loop log, and the backlog, and
+`docs/ROADMAP.md` for the strategy behind it.
+
+## License
+
+No license yet — all rights reserved until one is chosen (see
+docs/ROADMAP.md §5).

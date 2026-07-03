@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stereosplitter.local/schema/mix-document/v1",
+  "title": "Mix Document",
+  "description": "The single contract between the UI, the intent engine, and the audio core. Every layer of Stereo Splitter produces or consumes this document and nothing else: the web UI emits it as the render payload, the chat assistant emits it as its only output, and the offline renderer (and, later, the real-time executor) executes it. Stripped of any song-specific data it doubles as a shareable recipe. No layer talks to another except through this schema.",
+  "type": "object",
+  "properties": {
+    "version": {
+      "const": 1,
+      "description": "Mix Document schema version. Optional for now — servers tolerate its absence and assume v1."
+    },
+    "stems": {
+      "type": "object",
+      "description": "Per-stem placement settings, keyed by stem name (e.g. vocals, drums, bass, other).",
+      "additionalProperties": {
+        "$ref": "#/$defs/stem"
+      }
+    },
+    "global": {
+      "$ref": "#/$defs/global"
+    }
+  },
+  "required": [
+    "stems",
+    "global"
+  ],
+  "$defs": {
+    "stem": {
+      "type": "object",
+      "description": "Placement and level settings for one stem. Only `mode` is required; omitted fields fall back to server-side defaults.",
+      "properties": {
+        "mode": {
+          "description": "Placement mode for this stem.",
+          "enum": [
+            "center",
+            "hard_left",
+            "hard_right",
+            "wide",
+            "autopan",
+            "eightd"
+          ]
+        },
+        "gain_db": {
+          "type": "number",
+          "description": "Stem gain in dB. 0 = unchanged volume.",
+          "minimum": -24,
+          "maximum": 6
+        },
+        "haas_ms": {
+          "type": "number",
+          "description": "Haas delay in milliseconds for `wide` mode.",
+          "minimum": 5,
+          "maximum": 35
+        },
+        "rate_hz": {
+          "type": "number",
+          "description": "Sweep/orbit rate in Hz for `autopan` and `eightd` modes.",
+          "minimum": 0.05,
+          "maximum": 4
+        },
+        "depth": {
+          "type": "number",
+          "description": "Pan sweep depth for `autopan` and `eightd` modes. 0 = static, 1 = full width.",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "sync_beats": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Beats per full sweep/orbit, tempo-synced to the detected BPM. Overrides `rate_hz` when set; null disables tempo sync.",
+          "minimum": 0.25,
+          "maximum": 64
+        }
+      },
+      "required": [
+        "mode"
+      ]
+    },
+    "global": {
+      "type": "object",
+      "description": "Master effects applied to the summed mix.",
+      "properties": {
+        "speed": {
+          "type": "number",
+          "description": "Playback speed multiplier (pitch follows, like real slowed edits). 1.0 = original speed.",
+          "minimum": 0.65,
+          "maximum": 1.2
+        },
+        "reverb": {
+          "type": "number",
+          "description": "Synthesized hall reverb amount. 0 = dry, 1 = maximum.",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "loudness_match": {
+          "type": "boolean",
+          "description": "Match the render's loudness to the original, with a transparent soft limiter."
+        }
+      }
+    }
+  }
+}
