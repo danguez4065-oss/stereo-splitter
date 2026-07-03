@@ -5,6 +5,8 @@ schema-constrained settings object; everything is validated and clamped
 server-side before it ever reaches the audio engine.
 """
 
+from __future__ import annotations
+
 import json
 import os
 import urllib.error

@@ -5,6 +5,8 @@ Output of every public function is (n, 2) float32 (n may grow for
 modes that add a reverb tail).
 """
 
+from __future__ import annotations
+
 import numpy as np
 
 MODES = ("center", "hard_left", "hard_right", "wide", "autopan", "eightd")
